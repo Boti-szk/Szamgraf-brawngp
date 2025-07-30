@@ -1,0 +1,20 @@
+Mindhárom pitwallon ezeket hajtottam végre:
+
+Talaj: Egy kockából(térháló menüpontból lett kiválasztva) indultam ki amelyet átméreteztem.
+
+Pitwall: 5db kockából(térháló menüpontból lett kiválasztva) áll amelyeket átméreteztem, valamint a megfelelő helyre pozicionáltam.
+
+TV-k: 3db síklapból(meta test menüpontból lett kiválasztva) indultam ki amelyeket átméreteztem, elforgattam és a megfelelő helyre poziccionáltam.
+
+Székek: 6db kúpból és 6db hengerből áll melyeket átméreteztem és a megfelelő helyre pozicionáltam. 
+
+Mindenhez a material fül alatt új anyag létrehozásával színt rendeltem.
+
+
+Kerités:
+
+A kerítés alja: Egy kockából(térháló menüpontból lett kiválasztva) indultam ki amelyet átméreteztem.
+
+Rácsok: Sok kockából(térháló menüpontból lett kiválasztva) indultam ki amelyet átméreteztem, a függőlegeseket forgattam a z tengelyen, majd a megfelelő helyre pozicionáltam.
+
+Mindenhez a material fül alatt új anyag létrehozásával színt rendeltem.

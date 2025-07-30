@@ -1,0 +1,712 @@
+ <!-- Brawn: The Impossible Formula 1 Story -->
+        <!DOCTYPE html>
+        <html lang="hu">
+
+            <head>
+            <meta charset=utf-8>
+            <title>Brawn gp</title>
+        <style>
+            body { margin: 0; overflow: hidden; }
+            canvas { width: 100%; height: 100% }
+        </style>
+    </head>
+
+        <body>
+
+        <script async src="./dist/es-module-shims.js"></script>
+<script type="importmap">
+    {
+        "imports": {
+            "three": "./js-r154/build/three.module.js",
+            "TrackballControls": "./js-r154/examples/jsm/controls/TrackballControls.js",
+            "MTLLoader": "./js-r154/examples/jsm/loaders/MTLLoader.js",
+            "OBJLoader": "./js-r154/examples/jsm/loaders/OBJLoader.js"
+        }
+    }
+</script>
+        <div id="" style="position: fixed; color: deeppink; top: 0; left: 0; padding: 10px; display: block;">
+            <p>Név: Szitás Botond Károly</p>
+            <p>Neptun kód: TJXVRK</p>
+            <p>Szak: mérnökinformatikus</p>
+            <p>aktuális tanév: 2023/24/1</p>
+        </div>
+
+        <div id="infoPanel" style="position: fixed; color: deeppink; top: 0; right: 0; padding: 10px; display: block;">
+            <p>Funkciók vezérléséhez rendelkezésre álló billentyűk:</p>
+            <p>R: Nappal</p>
+            <p>T: Éjjel</p>
+            <p>F: Villanyfény kikapcsolása</p>
+            <p>G: Villanyfény bekapcsolása</p>
+            <p>1: Eredeti nézet</p>
+            <p>2: Pitwall nézet</p>
+            <p>3: Bal oldali nézet</p>
+            <p>4: Jobb oldali/Bolygó felőli nézet</p>
+            <p>5: Felső nézet</p>
+            <p>W: A bolygó mozgatása fel</p>
+            <p>S: A bolygó mozgatása le</p>
+            <p>A: A bolygó mozgatása balra</p>
+            <p>D: A bolygó mozgatása jobbra</p>
+            <p>Q: A bolygó mozgatása hátra</p>
+            <p>E: A bolygó mozgatása előre</p>
+            <p>I: Panel ki/be kapcsolása</p>
+        </div>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { TrackballControls } from 'TrackballControls';
+    import {MTLLoader} from 'MTLLoader';
+    import {OBJLoader} from 'OBJLoader';
+
+    // Globális változók
+    let WIDTH, HEIGHT, aspectRatio;
+    let renderer;
+    let scene, camera;
+    let controls;
+    let auto;
+    let meshLoaded1, meshLoaded2, meshLoaded3, meshLoaded4;
+
+    loader();
+
+    function loader() {
+        let mtlLoader1 = new MTLLoader();
+        mtlLoader1.load('pitwall.mtl',
+            function (materials) {
+                materials.preload();
+
+                let objLoader1 = new OBJLoader();
+                objLoader1.setMaterials(materials);
+                objLoader1.load('pitwall.obj',
+                    function (loaded) {
+                        meshLoaded1 = loaded;
+                        meshLoaded1.castShadow = true;
+                        meshLoaded1.receiveShadow = true;
+                        meshLoaded1.position.set( -180, 10, -155 );
+                        meshLoaded1.rotation.set( 0, 90 * Math.PI / 180, 0 );
+                        meshLoaded1.scale.set(2.7, 2.7, 2.7);
+
+
+                    },
+                    function (xhr) {
+                        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                    },
+                    function (error) {
+                        console.log('An error happened');
+                    });
+            });
+
+        let mtlLoader2 = new MTLLoader();
+        mtlLoader2.load('pitwallredbull.mtl',
+            function (materials) {
+                materials.preload();
+
+                let objLoader2 = new OBJLoader();
+                objLoader2.setMaterials(materials);
+                objLoader2.load('pitwallredbull.obj',
+                    function (loaded) {
+                        meshLoaded2 = loaded;
+                        meshLoaded2.castShadow = true;
+                        meshLoaded2.receiveShadow = true;
+                        meshLoaded2.position.set( 180, 10, -155 );
+                        meshLoaded2.rotation.set( 0, 90 * Math.PI / 180, 0 );
+                        meshLoaded2.scale.set(2.7, 2.7, 2.7);
+
+
+                    },
+                    function (xhr) {
+                        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                    },
+                    function (error) {
+                        console.log('An error happened');
+                    });
+            });
+
+        let mtlLoader3 = new MTLLoader();
+        mtlLoader3.load('pitwallbrawngp.mtl',
+            function (materials) {
+                materials.preload();
+
+                let objLoader3 = new OBJLoader();
+                objLoader3.setMaterials(materials);
+                objLoader3.load('pitwallbrawngp.obj',
+                    function (loaded) {
+                        meshLoaded3 = loaded;
+                        meshLoaded3.castShadow = true;
+                        meshLoaded3.receiveShadow = true;
+                        meshLoaded3.position.set( 0, 10, -155 );
+                        meshLoaded3.rotation.set( 0, 90 * Math.PI / 180, 0 );
+                        meshLoaded3.scale.set(2.7, 2.7, 2.7);
+
+
+                    },
+                    function (xhr) {
+                        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                    },
+                    function (error) {
+                        console.log('An error happened');
+                    });
+            });
+
+        let mtlLoader4 = new MTLLoader();
+        mtlLoader4.load('kerites.mtl',
+            function (materials) {
+                materials.preload();
+
+                let objLoader4 = new OBJLoader();
+                objLoader4.setMaterials(materials);
+                objLoader4.load('kerites.obj',
+                    function (loaded) {
+                        meshLoaded4 = loaded;
+                        meshLoaded4.castShadow = true;
+                        meshLoaded4.receiveShadow = true;
+                        meshLoaded4.position.set( 0, 10, -130 );
+                        meshLoaded4.rotation.set( 0, 90 * Math.PI / 180, 0 );
+                        meshLoaded4.scale.set(20 ,20, 20);
+                        init();
+                    },
+                    function (xhr) {
+                        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                    },
+                    function (error) {
+                        console.log('An error happened');
+                    });
+            });
+    }
+
+    function init() {
+        // Böngésző ablakméret lekérése és méretarány számítása
+        HEIGHT = window.innerHeight;
+        WIDTH = window.innerWidth;
+        aspectRatio = WIDTH / HEIGHT;
+
+
+        // Renderer létrehozása és DOM-hoz adása
+        renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setSize(WIDTH, HEIGHT);
+        renderer.setClearColor(0x00a2c);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+
+        // Színtér létrehozása
+        scene = new THREE.Scene();
+
+        //köd hozzáadása
+        scene.fog = new THREE.FogExp2( 0x808080, 0.002 );
+
+
+        //blender objektumok hozzáadása
+        scene.add(meshLoaded1);
+        scene.add(meshLoaded2);
+        scene.add(meshLoaded3);
+        scene.add(meshLoaded4);
+
+
+        // Kamera létrehozása és vetítési paramétereinek beállítása
+        camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
+        camera.position.set(0, 200, 500);
+        camera.lookAt(scene.position.x, scene.position.y, scene.position.z);
+
+
+        //textúrák
+        //külső fájlból
+        let textureLoader = new THREE.TextureLoader();
+        let szarnytexture = textureLoader.load('greencarbon.jpg');
+        let holdtexture = textureLoader.load('hold.jpg');
+        let naptexture = textureLoader.load('nap.png');
+        let talajtexture = textureLoader.load('aszfalt.jpg');
+        let oszloptexture = textureLoader.load('metal.jpg');
+        let autotexture = textureLoader.load('whitecarbon.jpg');
+        let startlampatexture = textureLoader.load('startlampa.jpg');
+        let vilagitastexture = textureLoader.load('vilagitas.jpg');
+        let vonaltexture = textureLoader.load('white.jpg');
+        let gumitexture = textureLoader.load('gumi.jpg');
+
+        //bump textúrázás
+        let holdbump = textureLoader.load( 'hold.jpg' );
+        let napbump = textureLoader.load( 'nap.png' );
+        /*
+        //tengelyek
+        let axesHelper = new THREE.AxesHelper( 50 );
+        scene.add( axesHelper );
+        */
+
+
+        // Talaj
+        let groundGeometry = new THREE.PlaneGeometry(600, 600);
+        let groundMaterial = new THREE.MeshLambertMaterial();
+        groundMaterial.map = talajtexture;
+
+        let groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+        groundMesh.rotation.x = -1.0 * THREE.MathUtils.degToRad(90);
+        scene.add(groundMesh);
+        groundMesh.castShadow = false;
+        groundMesh.receiveShadow = true;
+
+
+        //rajthely
+        let hely = new THREE.BoxGeometry(80, 1, 2);
+        let helyMaterial = new THREE.MeshLambertMaterial();
+        helyMaterial.map = vonaltexture;
+        let helyMesh1 = new THREE.Mesh(hely, helyMaterial);
+        helyMesh1.position.set(2, 1, 120);
+        scene.add(helyMesh1);
+        let helyMesh2 = new THREE.Mesh(hely, helyMaterial);
+        helyMesh2.position.set(2, 1, 80);
+        scene.add(helyMesh2);
+        let start = new THREE.BoxGeometry(2, 1, 38);
+        let startMaterial = new THREE.MeshLambertMaterial();
+        startMaterial.map = vonaltexture;
+        let startMesh = new THREE.Mesh(start, startMaterial);
+        startMesh.position.set(41, 1, 100);
+        scene.add(startMesh);
+        helyMesh1.castShadow = false;
+        helyMesh1.receiveShadow = true;
+        helyMesh2.castShadow = false;
+        helyMesh2.receiveShadow = true;
+        startMesh.castShadow = false;
+        startMesh.receiveShadow = true;
+
+
+        //auto
+        auto = new THREE.Group();
+
+        //test
+        let test = new THREE.BoxGeometry(60, 10, 20);
+        let testMaterial = new THREE.MeshPhongMaterial();
+        testMaterial.map = autotexture;
+        let testMesh = new THREE.Mesh(test, testMaterial);
+        testMesh.position.set(0, 10, 100);
+        testMesh.rotation.set(0, 0, -4 * Math.PI / 180);
+        auto.add(testMesh);
+        testMesh.castShadow = true;
+        testMesh.receiveShadow = true;
+
+
+        let teto = new THREE.CylinderGeometry(5, 10, 12, 8);
+        let tetoMaterial = new THREE.MeshPhongMaterial();
+        tetoMaterial.map = autotexture;
+        let tetoMesh = new THREE.Mesh(teto, tetoMaterial);
+        tetoMesh.position.set(0, 20, 100);
+        tetoMesh.rotation.set(0, 0, -4 * Math.PI / 180)
+        auto.add(tetoMesh);
+        tetoMesh.castShadow = true;
+        tetoMesh.receiveShadow = true;
+
+
+        //kerekek
+        let kerek = new THREE.CylinderGeometry(6, 6, 5, 64);
+        let kerekMaterial = new THREE.MeshLambertMaterial();
+        kerekMaterial.map = gumitexture;
+        let kerekMesh1 = new THREE.Mesh(kerek, kerekMaterial);
+        kerekMesh1.position.set(15, 6, 112);
+        kerekMesh1.rotation.set(90 * Math.PI / 180, 0, 0);
+        auto.add(kerekMesh1);
+        let kerekMesh2 = new THREE.Mesh(kerek, kerekMaterial);
+        kerekMesh2.position.set(-15, 6, 112);
+        kerekMesh2.rotation.set(90 * Math.PI / 180, 0, 0);
+        auto.add(kerekMesh2);
+        let kerekMesh3 = new THREE.Mesh(kerek, kerekMaterial);
+        kerekMesh3.position.set(15, 6, 88);
+        kerekMesh3.rotation.set(90 * Math.PI / 180, 0, 0);
+        auto.add(kerekMesh3);
+        let kerekMesh4 = new THREE.Mesh(kerek, kerekMaterial);
+        kerekMesh4.position.set(-15, 6, 88);
+        kerekMesh4.rotation.set(90 * Math.PI / 180, 0, 0);
+        auto.add(kerekMesh4);
+        kerekMesh1.castShadow = true;
+        kerekMesh1.receiveShadow = true;
+        kerekMesh2.castShadow = true;
+        kerekMesh2.receiveShadow = true;
+        kerekMesh3.castShadow = true;
+        kerekMesh3.receiveShadow = true;
+        kerekMesh4.castShadow = true;
+        kerekMesh4.receiveShadow = true;
+
+
+        //szárnyak
+        let szarny = new THREE.BoxGeometry(7, 5, 32);
+        let szarnyMaterial = new THREE.MeshPhongMaterial();
+        szarnyMaterial.map = szarnytexture;
+        let szarnyMesh = new THREE.Mesh(szarny, szarnyMaterial);
+        szarnyMesh.position.set(-30, 18, 100);
+        szarnyMesh.rotation.set(0, 0, -4 * Math.PI / 180);
+        auto.add(szarnyMesh);
+        szarnyMesh.castShadow = true;
+        szarnyMesh.receiveShadow = true;
+
+        let szarny2 = new THREE.BoxGeometry(7, 3, 40);
+        let szarny2Material = new THREE.MeshPhongMaterial();
+        szarny2Material.map = szarnytexture;
+        let szarny2Mesh = new THREE.Mesh(szarny2, szarny2Material);
+        szarny2Mesh.position.set(30, 4, 100);
+        szarny2Mesh.rotation.set(0, 0, -4 * Math.PI / 180);
+        auto.add(szarny2Mesh);
+        szarny2Mesh.castShadow = true;
+        szarny2Mesh.receiveShadow = true;
+
+        scene.add(auto);
+
+
+        //start lámpák
+        //rudak
+        let rud = new THREE.BoxGeometry(4, 80, 4);
+        let rudMaterial = new THREE.MeshLambertMaterial();
+        rudMaterial.map = oszloptexture;
+        let rudMesh1 = new THREE.Mesh(rud, rudMaterial);
+        rudMesh1.position.set(50, 40, 140);
+        rudMesh1.rotation.set(0, 0, 0);
+        scene.add(rudMesh1);
+        rudMesh1.castShadow = true;
+        rudMesh1.receiveShadow = true;
+
+        let rudMesh2 = new THREE.Mesh(rud, rudMaterial);
+        rudMesh2.position.set(50, 40, 60);
+        rudMesh2.rotation.set(0, 0, 0);
+        scene.add(rudMesh2);
+        rudMesh2.castShadow = true;
+        rudMesh2.receiveShadow = true;
+
+        let rudMesh3 = new THREE.Mesh(rud, rudMaterial);
+        rudMesh3.position.set(50, 78, 100);
+        rudMesh3.rotation.set(90 * Math.PI / 180, 0, 0);
+        scene.add(rudMesh3);
+        rudMesh3.castShadow = true;
+        rudMesh3.receiveShadow = true;
+
+
+        //lámpa tartók
+        let lampa = new THREE.BoxGeometry(10, 20, 10);
+        let lampaMaterial = new THREE.MeshLambertMaterial();
+        lampaMaterial.map = oszloptexture;
+        let lampaMesh1 = new THREE.Mesh(lampa, lampaMaterial);
+        lampaMesh1.position.set(50, 66, 79);
+        lampaMesh1.rotation.set(0, 0, 0);
+        scene.add(lampaMesh1);
+        lampaMesh1.castShadow = true;
+        lampaMesh1.receiveShadow = true;
+
+        let lampaMesh2 = new THREE.Mesh(lampa, lampaMaterial);
+        lampaMesh2.position.set(50, 66, 93);
+        lampaMesh2.rotation.set(0, 0, 0);
+        scene.add(lampaMesh2);
+        lampaMesh2.castShadow = true;
+        lampaMesh2.receiveShadow = true;
+
+        let lampaMesh3 = new THREE.Mesh(lampa, lampaMaterial);
+        lampaMesh3.position.set(50, 66, 107);
+        lampaMesh3.rotation.set(0, 0, 0);
+        scene.add(lampaMesh3);
+        lampaMesh3.castShadow = true;
+        lampaMesh3.receiveShadow = true;
+
+        let lampaMesh4 = new THREE.Mesh(lampa, lampaMaterial);
+        lampaMesh4.position.set(50, 66, 121);
+        lampaMesh4.rotation.set(0, 0, 0);
+        scene.add(lampaMesh4);
+        lampaMesh4.castShadow = true;
+        lampaMesh4.receiveShadow = true;
+
+
+        //startlámpák
+        let lampak = new THREE.SphereGeometry(3, 30, 30);
+        let lampakMaterial = new THREE.MeshPhongMaterial();
+        lampakMaterial.map = startlampatexture;
+
+        let lampakMesh1 = new THREE.Mesh(lampak, lampakMaterial);
+        lampakMesh1.position.set(45, 66, 79);
+        lampakMesh1.rotation.set(0, 0, 0);
+        scene.add(lampakMesh1);
+        let lampakMesh2 = new THREE.Mesh(lampak, lampakMaterial);
+        lampakMesh2.position.set(45, 66, 93);
+        lampakMesh2.rotation.set(0, 0, 0);
+        scene.add(lampakMesh2);
+        let lampakMesh3 = new THREE.Mesh(lampak, lampakMaterial);
+        lampakMesh3.position.set(45, 66, 107);
+        lampakMesh3.rotation.set(0, 0, 0);
+        scene.add(lampakMesh3);
+
+        let lampak4 = new THREE.SphereGeometry(3, 30, 30);
+        let lampak4Material = new THREE.MeshPhongMaterial();
+        lampak4Material.map = startlampatexture;
+        let lampakMesh4 = new THREE.Mesh(lampak4, lampak4Material);
+        lampakMesh4.position.set(45, 66, 121);
+        lampakMesh4.rotation.set(0, 0, 0);
+        scene.add(lampakMesh4);
+
+
+        //pont ahova világít a rajtlámpa
+        let pont = new THREE.SphereGeometry(0.1, 0.1, 0.1);
+        let pontMaterial = new THREE.MeshBasicMaterial();
+        let pontMesh = new THREE.Mesh(pont, pontMaterial);
+        pontMesh.position.set(-20, 0, 100);
+        scene.add(pontMesh);
+
+
+        //reflektorfény(rajtlámpák)
+        let sLight = new THREE.SpotLight(0x990000, 5);
+        sLight.position.set(45, 66, 121);
+        sLight.angle = Math.PI / 6;
+        sLight.target = pontMesh;
+        scene.add(sLight);
+        sLight.castShadow = true;
+        //let spotLightHelper = new THREE.SpotLightHelper( sLight );
+        //scene.add( spotLightHelper );
+        let ssLight = new THREE.SpotLight(0x990000, 5);
+        ssLight.position.set(45, 66, 77);
+        ssLight.angle = Math.PI / 6;
+        ssLight.target = pontMesh;
+        scene.add(ssLight);
+        sLight.castShadow = true;
+        //let sspotLightHelper = new THREE.SpotLightHelper( ssLight );
+        //scene.add( sspotLightHelper );
+        let sssLight = new THREE.SpotLight(0x990000, 5);
+        sssLight.position.set(45, 66, 93);
+        sssLight.angle = Math.PI / 6;
+        sssLight.target = pontMesh;
+        scene.add(sssLight);
+        sssLight.castShadow = true;
+        //let ssspotLightHelper = new THREE.SpotLightHelper( sssLight );
+        //scene.add( ssspotLightHelper );
+        let ssssLight = new THREE.SpotLight(0x990000, 5);
+        ssssLight.position.set(45, 66, 79);
+        ssssLight.angle = Math.PI / 6;
+        ssssLight.target = pontMesh;
+        scene.add(ssssLight);
+        ssssLight.castShadow = true;
+        //let sssspotLightHelper = new THREE.SpotLightHelper( ssssLight );
+        //scene.add( sssspotLightHelper );
+        
+
+        //világítás(lámpa)
+        //oszlop
+        let oszlop = new THREE.BoxGeometry(5, 120, 5);
+        let oszlopMaterial = new THREE.MeshLambertMaterial();
+        oszlopMaterial.map = oszloptexture;
+        let oszlopMesh1 = new THREE.Mesh(oszlop, oszlopMaterial);
+        oszlopMesh1.position.set(80, 60, -220);
+        oszlopMesh1.rotation.set(0, 0, 0);
+        scene.add(oszlopMesh1);
+        oszlopMesh1.castShadow = true;
+        oszlopMesh1.receiveShadow = true;
+        let oszlopMesh2 = new THREE.Mesh(oszlop, oszlopMaterial);
+        oszlopMesh2.position.set(-80, 60, -220);
+        oszlopMesh2.rotation.set(0, 0, 0);
+        scene.add(oszlopMesh2);
+        oszlopMesh2.castShadow = true;
+        oszlopMesh2.receiveShadow = true;
+
+
+        //villanytartó
+        let tarto = new THREE.BoxGeometry(10, 10, 30);
+        let tartoMaterial = new THREE.MeshLambertMaterial();
+        tartoMaterial.map = oszloptexture;
+        let tartoMesh1 = new THREE.Mesh(tarto, tartoMaterial);
+        tartoMesh1.position.set(80, 120, -230);
+        tartoMesh1.rotation.set(0, 0, 0);
+        scene.add(tartoMesh1);
+        tartoMesh1.castShadow = true;
+        tartoMesh1.receiveShadow = true;
+        let tartoMesh2 = new THREE.Mesh(tarto, tartoMaterial);
+        tartoMesh2.position.set(-80, 120, -230);
+        tartoMesh2.rotation.set(0, 0, 0);
+        scene.add(tartoMesh2);
+        tartoMesh2.castShadow = true;
+        tartoMesh2.receiveShadow = true;
+
+
+        //villany
+        let villany = new THREE.SphereGeometry(4, 30, 30);
+        let villanyMaterial = new THREE.MeshPhongMaterial();
+        villanyMaterial.map = vilagitastexture;
+        let villanyMesh1 = new THREE.Mesh(villany, villanyMaterial);
+        villanyMesh1.position.set(80, 115, -240);
+        villanyMesh1.rotation.set(0, 0, 0);
+        scene.add(villanyMesh1);
+        let villanyMesh2 = new THREE.Mesh(villany, villanyMaterial);
+        villanyMesh2.position.set(-80, 115, -240);
+        villanyMesh2.rotation.set(0, 0, 0);
+        scene.add(villanyMesh2);
+
+
+        //pontfény(villanyfény)
+        let pointLight1 = new THREE.PointLight(0xffd681, 2);
+        pointLight1.position.set(80, 115, -240);
+        scene.add(pointLight1);
+        let pointLight2 = new THREE.PointLight(0xffd681, 2);
+        pointLight2.position.set(-80, 115, -240);
+        scene.add(pointLight2);
+
+
+        //nap
+        let nap = new THREE.SphereGeometry(35, 30, 30);
+        let napMaterial = new THREE.MeshPhongMaterial();
+        napMaterial.map = naptexture;
+        napMaterial.bumpMap = napbump;
+        napMaterial.bumpScale = 1.0;
+        let napMesh = new THREE.Mesh(nap, napMaterial);
+        napMesh.position.set(400, 180, 10);
+        napMesh.rotation.set(0, 0, 0);
+        scene.add(napMesh);
+
+        //hold
+        let hold = new THREE.SphereGeometry(35, 30, 30);
+        let holdMaterial = new THREE.MeshPhongMaterial();
+        holdMaterial.map = holdtexture;
+        holdMaterial.bumpMap = holdbump;
+        holdMaterial.bumpScale = 1.0;
+        let holdMesh = new THREE.Mesh(hold, holdMaterial);
+        holdMesh.position.set(400, 180, 10);
+        holdMesh.rotation.set(0, 0, 0);
+        let ambientLight = new THREE.AmbientLight(0xfae4ac, 1);
+        scene.add(ambientLight);
+        scene.add(holdMesh);
+
+
+        //irányfény(kamera fénye)
+        let dLight = new THREE.DirectionalLight(0xf2f2f2, 3);
+        dLight.position.set(4, 100, 400);
+        dLight.target = helyMesh2;
+        scene.add(dLight);
+        dLight.castShadow = true;
+
+
+        // Az ablak későbbi átméretezése esetén visszahívható függvény megadása
+        window.addEventListener('resize', handleWindowResize, false);
+
+        // Kamera vezérlés
+        controls = new TrackballControls(camera, renderer.domElement);
+        controls.rotateSpeed = 5.0;
+        controls.panSpeed = 1.0;
+
+        animate();
+
+
+        document.addEventListener('keydown', handleKeyPress);  // Eseményfigyelő hozzáadása
+
+        // Infópanel létrehozása
+        let infoPanel = document.getElementById('infoPanel');
+
+        //billentyű lenyomások megvalósítása
+        function handleKeyPress(event) {
+            if (event.key === 'r') {
+                // q gomb lenyomásakor világos háttér, nincs hold, és nem világítanak a lámpák
+                scene.background = new THREE.Color(0x89b5fa); // világos
+                napMesh.visible = true; //nap megjelenése
+                holdMesh.visible = false; // Hold eltüntetése
+                ambientLight.visible = false //Holdfény kikapcsolása
+            } else if (event.key === 't') {
+                // e gomb lenyomásakor visszaáll az eredeti állapot
+                scene.background = new THREE.Color(0x00a2c); // Eredeti háttér
+                napMesh.visible = false; //nap eltűnése
+                holdMesh.visible = true; // Hold megjelenítése
+                ambientLight.visible = true //Holdfény bekapcsolása
+            }else if (event.key === 'f') {
+                // r gomb lenyomásakor visszaáll az eredeti állapot
+                pointLight1.visible = false; // Lámpafény bekapcsolása
+                pointLight2.visible = false;
+            } else if (event.key === 'g') {
+                // t gomb lenyomásakor visszaáll az eredeti állapot
+                pointLight1.visible = true; // Lámpafény bekapcsolása
+                pointLight2.visible = true;
+            } else if (event.key === '1') {
+                // 1-es gomb lenyomásakor a "nézőtérről nézhető az autó"
+                camera.position.set(0, 200, 500);
+                dLight.position.set(4, 200, 500);
+            } else if (event.key === '2') {
+                //2-es gomb lenyomásakor a pitwallból nézhető az autó
+                camera.position.set(0, 200, -500);
+                dLight.position.set(4, 200, -500);
+            } else if (event.key === '3') {
+                //3-as gomb lenyomásakor a bal oldalról nézhető az autó
+                camera.position.set(-500, 150, 0);
+                dLight.position.set(-500, 150, 0);
+            } else if (event.key === '4') {
+                //4-es gomb lenyomásakor a bolygótól nézhető az autó
+                camera.position.set(500, 150, 0);
+                dLight.position.set(500, 150, 0);
+            } else if (event.key === '5') {
+                //5-ös gomb lenyomásakor a felső nézetből nézhető az autó
+                camera.position.set(0, 500, 0);
+                dLight.position.set(0, 500, 0);
+            } else if (event.key === 'i') {
+                // Az "i" gomb lenyomásakor az infópanel jelenjen meg vagy tűnjön el
+                InfoPanellathatosag();
+            }
+            //hold-,nap-mozgatás
+            else if (event.key === 'w') {
+                // w gomb lenyomásakor a nap felfelé mozog
+                napMesh.position.y += 10;
+                holdMesh.position.y += 10;
+            } else if (event.key === 's') {
+                // s gomb lenyomásakor a nap lefelé mozog
+                napMesh.position.y -= 10;
+                holdMesh.position.y -= 10;
+            } else if (event.key === 'a') {
+                // a gomb lenyomásakor a nap balra mozog
+                napMesh.position.x -= 10;
+                holdMesh.position.x -= 10;
+            } else if (event.key === 'd') {
+                // d gomb lenyomásakor a nap jobbra mozog
+                napMesh.position.x += 10;
+                holdMesh.position.x += 10;
+            } else if (event.key === 'q') {
+                // a gomb lenyomásakor a nap balra mozog
+                napMesh.position.z -= 10;
+                holdMesh.position.z -= 10;
+            } else if (event.key === 'e') {
+                // d gomb lenyomásakor a nap jobbra mozog
+                napMesh.position.z += 10;
+                holdMesh.position.z += 10;
+            }
+        }
+    }
+
+    //az infópanel megjelenése/eltűntetése
+    function InfoPanellathatosag() {
+        // Az infópanel jelenlétének állapotát változtatja
+        if (infoPanel.style.display === 'none') {
+            infoPanel.style.display = 'block';
+        } else {
+            infoPanel.style.display = 'none';
+        }
+    }
+
+
+    function handleWindowResize() {
+        // Az ablak átméretezése esetén a kamera vetítési paraméterek újraszámolása
+        HEIGHT = window.innerHeight;
+        WIDTH = window.innerWidth;
+        console.log( 'WIDTH=' + WIDTH + '; HEIGHT=' + HEIGHT );
+        renderer.setSize( WIDTH, HEIGHT );
+        aspectRatio = WIDTH / HEIGHT;
+        camera.aspect = aspectRatio;
+        camera.updateProjectionMatrix();
+
+        render();
+    }
+
+
+    function animate() {
+        // Újabb képkocka rajzolásának kérése.
+        // Maximálisan 60 FPS-t biztosít a rendszer.
+        requestAnimationFrame( animate );
+
+        // Kamera vezérlés
+        controls.update();
+
+        //autó mozgása
+        auto.rotation.y += 0.05;
+
+        render();
+    }
+
+
+    function render() {
+        // 3D -> 2D vetített kép kiszámítása.
+        // scene 3D színtér képe a camera kamera szemszögéből.
+        renderer.render( scene, camera );
+    }
+
+</script>
+</body>
+</html>
